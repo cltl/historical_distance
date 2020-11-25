@@ -2,6 +2,7 @@ import os
 from lxml import etree
 from datetime import datetime, date
 import pandas as pd
+import shutil
 
 def timestamp_naf(path_to_doc):
     """load NAF file and extract publication date"""
@@ -31,7 +32,7 @@ def time_in_correct_format():
 
 def range_of_dates(event_date):
     """returns a list with a range of dates between the event date and the current date"""
-    event_date = event_date[:-12]
+    event_date = str(event_date)[:-9]
     current_date = time_in_correct_format()[:-12]
     mydates = pd.bdate_range(event_date,current_date).tolist()
 
@@ -59,7 +60,7 @@ def validate_publication_date(event_date, timestamps):
 
 def calculate_difference(list_of_timestamps, event_date):
     """calculates the difference between the publication dates and the event date and creates new list with extended tuples"""
-    event_date_replace = event_date.replace('-',',')
+    event_date_replace = str(event_date).replace('-',',')
     event_date = event_date_replace[:10]
     event_year = int(event_date[:4])
     event_month = int(event_date[5:7])
@@ -96,7 +97,19 @@ def categorize_in_time_buckets(known_distance):
         known_distance_info.append((info[0],info[1],info[2],time_bucket,info[3]))
     return known_distance_info
 
-def timestamps_to_format(known_timestamps,unknown_timestamps,output_folder):
+def create_output_folder(output_folder):
+    '''creates output folder for export dataframe'''
+    folder = output_folder
+    start_from_scratch = True
+
+    if os.path.isdir(folder):
+        if start_from_scratch:
+            shutil.rmtree(folder)
+
+    if not os.path.isdir(folder):
+        os.mkdir(folder)
+
+def timestamps_to_format(known_timestamps,unknown_timestamps,xlsx_path,output_folder):
     """
     lists of tuples to excel
     """
@@ -114,5 +127,6 @@ def timestamps_to_format(known_timestamps,unknown_timestamps,output_folder):
     df = pd.DataFrame(list_of_lists, columns=headers)
 
     if output_folder != None:
-        df.to_excel(output_folder, index=False)
+        create_output_folder(output_folder)
+        df.to_excel(xlsx_path, index=False)
     return df
