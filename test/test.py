@@ -22,4 +22,5 @@ historical_distance = calculate_historical_distance(iterable_of_nafs=collection,
                                                     event_date=event_date,
                                                     time_buckets=time_buckets,
                                                     xlsx_path=xlsx_path,
-                                                    output_folder=output_folder)
+                                                    output_folder=output_folder,
+                                                    start_from_scratch=False)

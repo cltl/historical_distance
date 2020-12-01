@@ -5,7 +5,8 @@ def calculate_historical_distance(iterable_of_nafs,
                                     event_date,
                                     time_buckets,
                                     xlsx_path=None,
-                                    output_folder=None):
+                                    output_folder=None,
+                                    start_from_scratch=True):
     '''
     provides the spread of historical distance in days for a corpus of reference texts
     :param path_to_nafs: path to a directory containing a collection of naf files
@@ -24,5 +25,6 @@ def calculate_historical_distance(iterable_of_nafs,
     df = timestamps_to_format(known_timestamps=known_distance_time_buckets,
                             unknown_timestamps=unknown_timestamps,
                             xlsx_path=xlsx_path,
-                            output_folder=output_folder)
+                            output_folder=output_folder,
+                            start_from_scratch=start_from_scratch)
     return df

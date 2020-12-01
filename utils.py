@@ -91,19 +91,18 @@ def categorize_in_time_buckets(known_distance,time_buckets):
                 info['time bucket'] = time_bucket
     return known_distance
 
-def create_output_folder(output_folder):
+def create_output_folder(output_folder,start_from_scratch):
     '''creates output folder for export dataframe'''
     folder = output_folder
-    start_from_scratch = True
 
     if os.path.isdir(folder):
-        if start_from_scratch:
+        if start_from_scratch == True:
             shutil.rmtree(folder)
 
     if not os.path.isdir(folder):
         os.mkdir(folder)
 
-def timestamps_to_format(known_timestamps,unknown_timestamps,xlsx_path,output_folder):
+def timestamps_to_format(known_timestamps,unknown_timestamps,xlsx_path,output_folder,start_from_scratch):
     """
     lists of dictionaries to excel
     """
@@ -121,6 +120,7 @@ def timestamps_to_format(known_timestamps,unknown_timestamps,xlsx_path,output_fo
     df = pd.DataFrame(list_of_lists, columns=headers)
 
     if output_folder != None:
-        create_output_folder(output_folder)
+        create_output_folder(output_folder=output_folder,
+                            start_from_scratch=start_from_scratch)
         df.to_excel(xlsx_path, index=False)
     return df
