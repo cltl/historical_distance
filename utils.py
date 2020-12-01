@@ -5,7 +5,7 @@ import pandas as pd
 import shutil
 
 def timestamp_naf(path_to_doc):
-    """load NAF file and extract publication date"""
+    """load NAF file and extract title, publication date nd uri"""
     doc_tree = etree.parse(path_to_doc)
     root = doc_tree.getroot()
     target = root.find('nafHeader/fileDesc')
@@ -13,7 +13,7 @@ def timestamp_naf(path_to_doc):
     title = target.get('title')
     target2 = root.find('nafHeader/public')
     uri = target2.get('uri')
-    title_time = (title, creation_time, uri)
+    title_time = {'title':title, 'creation time': creation_time, 'uri':uri}
     return title_time
 
 def timestamps_collection(collection):
@@ -51,7 +51,7 @@ def validate_publication_date(event_date, timestamps):
     dates = range_of_dates(event_date)
 
     for timestamp in timestamps:
-        timestamp_stripped = timestamp[1][:-12]
+        timestamp_stripped = timestamp['creation time'][:-12]
         if timestamp_stripped in dates:
             known_dates.append(timestamp)
         else:
@@ -59,7 +59,7 @@ def validate_publication_date(event_date, timestamps):
     return known_dates, unknown_dates
 
 def calculate_difference(list_of_timestamps, event_date):
-    """calculates the difference between the publication dates and the event date and creates new list with extended tuples"""
+    """calculates the difference between the publication dates and the event date and creates new list with extended dictionaries"""
     event_date_replace = str(event_date).replace('-',',')
     event_date = event_date_replace[:10]
     event_year = int(event_date[:4])
@@ -69,7 +69,7 @@ def calculate_difference(list_of_timestamps, event_date):
     known_distance = []
 
     for info in list_of_timestamps:
-        timestamp = info[1]
+        timestamp = info['creation time']
         timestamp_replace = timestamp.replace('-',',')
         text_date = timestamp_replace[:10]
         text_year = int(text_date[:4])
@@ -78,24 +78,18 @@ def calculate_difference(list_of_timestamps, event_date):
         f_date = date(event_year,event_month,event_day)
         l_date = date(text_year,text_month,text_day)
         delta = l_date - f_date
-        known_distance.append((info[0],info[1],delta.days,info[2]))
-    return known_distance
+        info['historical distance'] = delta.days
+    return list_of_timestamps
 
-def categorize_in_time_buckets(known_distance):
-    '''extend the tuple with categorization of the historical distance in time buckets'''
-    known_distance_info = []
+def categorize_in_time_buckets(known_distance,time_buckets):
+    '''extend dictionary with categorization of the historical distance in time buckets'''
 
     for info in known_distance:
-        if info[2] == 0:
-            time_bucket = 1
-        elif info[2] == 1:
-            time_bucket = 2
-        elif info[2] in range(3,30):
-            time_bucket = 3
-        else:
-            time_bucket = 4
-        known_distance_info.append((info[0],info[1],info[2],time_bucket,info[3]))
-    return known_distance_info
+        for key, value in time_buckets.items():
+            if info['historical distance'] in value:
+                time_bucket = key
+                info['time bucket'] = time_bucket
+    return known_distance
 
 def create_output_folder(output_folder):
     '''creates output folder for export dataframe'''
@@ -111,17 +105,17 @@ def create_output_folder(output_folder):
 
 def timestamps_to_format(known_timestamps,unknown_timestamps,xlsx_path,output_folder):
     """
-    lists of tuples to excel
+    lists of dictionaries to excel
     """
-    headers = ['title', 'timestamp', 'hist. dist.','time buck.','uri']
+    headers = ['title', 'timestamp', 'historical distance','time bucket','uri']
 
     list_of_lists = []
 
     for info in known_timestamps:
-        one_row = [info[0],info[1],info[2],info[3],info[4]]
+        one_row = [info['title'],info['creation time'],info['historical distance'],info['time bucket'],info['uri']]
         list_of_lists.append(one_row)
     for info in unknown_timestamps:
-        a_row = [info[0],info[1], 'unknown','unknown',info[2]]
+        a_row = [info['title'],info['creation time'], 'unknown','unknown',info['uri']]
         list_of_lists.append(a_row)
 
     df = pd.DataFrame(list_of_lists, columns=headers)
