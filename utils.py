@@ -34,13 +34,14 @@ def range_of_dates(event_date):
     """returns a list with a range of dates between the event date and the current date"""
     event_date = str(event_date)[:-9]
     current_date = time_in_correct_format()[:-12]
-    mydates = pd.bdate_range(event_date,current_date).tolist()
+    mydates = pd.date_range(event_date,current_date).tolist()
 
     range_of_dates = []
 
     for date in mydates:
         date = str(date.date())
         range_of_dates.append(date)
+    print(range_of_dates)
     return range_of_dates
 
 def validate_publication_date(event_date, timestamps):
@@ -49,6 +50,8 @@ def validate_publication_date(event_date, timestamps):
     unknown_dates = []
 
     dates = range_of_dates(event_date)
+    for date in dates:
+        print(date)
 
     for timestamp in timestamps:
         timestamp_stripped = timestamp['creation time'][:-12]
