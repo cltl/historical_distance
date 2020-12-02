@@ -41,7 +41,6 @@ def range_of_dates(event_date):
     for date in mydates:
         date = str(date.date())
         range_of_dates.append(date)
-    print(range_of_dates)
     return range_of_dates
 
 def validate_publication_date(event_date, timestamps):
@@ -50,8 +49,6 @@ def validate_publication_date(event_date, timestamps):
     unknown_dates = []
 
     dates = range_of_dates(event_date)
-    for date in dates:
-        print(date)
 
     for timestamp in timestamps:
         timestamp_stripped = timestamp['creation time'][:-12]
