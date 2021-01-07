@@ -9,7 +9,7 @@ path = 'Q62090804/wiki_output/nl'
 output_folder = 'output'
 xlsx_path = 'output/historical_distance.xlsx'
 event_date = datetime(2019,3,18)
-time_buckets = {1:range(0,1), 2:range(1,2), 3:range(3,31), 4:range(31,100000)}
+time_buckets = {1:range(0,1), 2:range(1,2), 3:range(2,31), 4:range(31,100000000)}
 
 collection = []
 
