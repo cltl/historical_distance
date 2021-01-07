@@ -96,6 +96,10 @@ def categorize_in_time_buckets(known_distance,time_buckets):
             if info['historical distance'] in value:
                 time_bucket = key
                 info['time bucket'] = time_bucket
+        if "time bucket" not in info:
+            default_bucket = "outside bucket range"
+            info['time bucket'] = default_bucket
+            print("Warning: historical distance falls outside of time bucket range.")
     return known_distance
 
 def create_output_folder(output_folder,start_from_scratch):
