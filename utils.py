@@ -33,10 +33,10 @@ def time_in_correct_format():
 def range_of_dates(event_date):
     """returns a list with a range of dates between the event date and the current date"""
     bottom_date = datetime(1677,9,23)
-    
+
     if event_date.date() < bottom_date.date():
         event_date = "1677-09-23"
-        print('Bottom value as default for event date. Real event date not implemented in pandas time frame')
+        print('Warning: bottom value as default for this event date. Real event date not implemented in pandas time frame')
     else:
         event_date = str(event_date)[:-9]
 
